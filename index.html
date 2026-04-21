@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Breaking News</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#E8342A;--red-l:#FFF0EF;--red-m:#FFDAD7;
+  --amber:#F59E0B;--amber-l:#FFFBEB;--amber-m:#FEF3C7;
+  --blue:#3B82F6;--blue-l:#EFF6FF;--blue-m:#DBEAFE;
+  --purple:#8B5CF6;--purple-l:#F5F3FF;--purple-m:#EDE9FE;
+  --green:#10B981;--green-l:#ECFDF5;--green-m:#D1FAE5;
+  --orange:#F97316;--orange-l:#FFF7ED;--orange-m:#FFEDD5;
+  --slate:#64748B;--slate-m:#E2E8F0;--slate-l:#F8FAFC;
+  --ink:#0F172A;--muted:#475569;--hint:#94A3B8;
+  --bg:#F0F4F8;--card:#FFFFFF;--border:#E2E8F0;
+  --r:16px;--rs:10px;
+  --s0:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --s1:0 4px 16px rgba(0,0,0,.09),0 2px 6px rgba(0,0,0,.05);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
+
+/* ── BOOT ── */
+#boot{position:fixed;inset:0;background:var(--ink);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px;transition:opacity .5s}
+#boot.out{opacity:0;pointer-events:none}
+.b-logo{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;color:#fff;letter-spacing:-1.5px;display:flex;align-items:center;gap:10px}
+.b-logo-dot{width:10px;height:10px;background:var(--red);border-radius:50%;animation:pdot 1.4s ease-in-out infinite}
+@keyframes pdot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.5}}
+.b-logo span{color:var(--red)}
+.b-track-wrap{width:280px}
+.b-track{height:2px;background:rgba(255,255,255,.1);border-radius:1px;overflow:hidden;margin-bottom:12px}
+.b-fill{height:100%;background:var(--red);border-radius:1px;width:0%;transition:width .45s ease}
+.b-msg{font-size:13px;color:#64748B;text-align:center;height:20px}
+.b-steps{display:flex;gap:24px}
+.b-step{display:flex;align-items:center;gap:6px;font-size:12px;color:#334155;transition:color .3s}
+.b-step.on{color:#94A3B8}
+.b-step.ok{color:#34D399}
+.b-step-icon{font-size:14px;width:16px;text-align:center}
+
+/* ── HEADER ── */
+.hdr{background:var(--ink);position:sticky;top:0;z-index:200;border-bottom:1px solid rgba(255,255,255,.05)}
+.hdr-in{max-width:1260px;margin:0 auto;padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{display:flex;align-items:center;gap:9px;text-decoration:none}
+.logo-dot{width:8px;height:8px;background:var(--red);border-radius:50%;animation:pdot 1.6s ease-in-out infinite}
+.logo-txt{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:#fff;letter-spacing:-.5px}
+.logo-txt em{color:var(--red);font-style:normal}
+.hdr-center{display:flex;align-items:center;gap:16px}
+.meta-pill{display:flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:20px;font-size:11px;color:#94A3B8;white-space:nowrap}
+.meta-pill strong{color:#CBD5E1;font-weight:500}
+.meta-pill .dot-sep{width:3px;height:3px;background:#334155;border-radius:50%}
+.hdr-actions{display:flex;align-items:center;gap:8px}
+
+/* ── ICON BUTTONS ── */
+.ibtn{display:inline-flex;align-items:center;gap:8px;padding:7px 16px;border-radius:9px;border:1px solid;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;white-space:nowrap;position:relative;overflow:hidden}
+.ibtn:disabled{opacity:.38;cursor:not-allowed}
+.ibtn::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,0);transition:background .15s}
+.ibtn:hover:not(:disabled)::before{background:rgba(255,255,255,.07)}
+
+/* Reload button */
+.ibtn-reload{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.14);color:#CBD5E1}
+.ibtn-reload .btn-icon{width:17px;height:17px;flex-shrink:0}
+
+/* Quick button — teal accent */
+.ibtn-quick{background:rgba(20,184,166,.08);border-color:rgba(20,184,166,.3);color:#5EEAD4}
+.ibtn-quick .btn-icon{width:17px;height:17px;flex-shrink:0}
+
+/* Full button — violet accent */
+.ibtn-full{background:rgba(139,92,246,.08);border-color:rgba(139,92,246,.3);color:#C4B5FD}
+.ibtn-full .btn-icon{width:17px;height:17px;flex-shrink:0}
+
+.btn-divider{width:1px;height:22px;background:rgba(255,255,255,.1)}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinning{animation:spin .7s linear infinite}
+
+/* ── MAIN ── */
+.main{max-width:1260px;margin:0 auto;padding:28px 24px}
+
+/* ── TRENDING BAR ── */
+.tbar{display:flex;align-items:center;gap:8px;margin-bottom:28px;flex-wrap:wrap}
+.tbar-lbl{font-size:10.5px;font-weight:600;color:var(--hint);letter-spacing:.1em;text-transform:uppercase;margin-right:2px;white-space:nowrap}
+.ttag{display:inline-flex;align-items:center;gap:4px;padding:5px 11px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;transition:transform .15s,box-shadow .15s;border:1px solid transparent;white-space:nowrap;user-select:none}
+.ttag:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(0,0,0,.1)}
+.ttag.active{outline:2px solid var(--ink);outline-offset:1px}
+.c-r{background:var(--red-l);color:var(--red);border-color:var(--red-m)}
+.c-a{background:var(--amber-l);color:#B45309;border-color:var(--amber-m)}
+.c-b{background:var(--blue-l);color:#1D4ED8;border-color:var(--blue-m)}
+.c-p{background:var(--purple-l);color:var(--purple);border-color:var(--purple-m)}
+.c-g{background:var(--green-l);color:#059669;border-color:var(--green-m)}
+.c-o{background:var(--orange-l);color:var(--orange);border-color:var(--orange-m)}
+
+/* ── SECTION LABEL ── */
+.sec-lbl{font-family:'Syne',sans-serif;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--hint);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.sec-lbl::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── TOP 3 ── */
+.t3{display:grid;grid-template-columns:1.55fr 1fr;grid-template-rows:auto auto;gap:14px;margin-bottom:36px}
+.t3>:first-child{grid-row:1/3}
+
+/* ── CARD ── */
+.card{background:var(--card);border-radius:var(--r);border:1px solid var(--border);padding:18px 20px;box-shadow:var(--s0);transition:transform .2s,box-shadow .2s;animation:fu .35s ease both}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.card:hover{transform:translateY(-2px);box-shadow:var(--s1)}
+.card.hero{padding:24px 26px;border-left:4px solid var(--red)}
+.card.hero .ctit{font-size:17px;line-height:1.4}
+.card.hero .csum{font-size:14px}
+
+.chdr{display:flex;align-items:flex-start;gap:10px;margin-bottom:11px}
+.ctit{font-size:14px;font-weight:600;line-height:1.5;color:var(--ink);flex:1;letter-spacing:-.01em}
+.ibadge{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:6px;font-size:10.5px;font-weight:600;white-space:nowrap;flex-shrink:0}
+.i-hi{background:var(--red-l);color:var(--red)}
+.i-md{background:var(--amber-l);color:#B45309}
+.i-lo{background:var(--slate-m);color:var(--slate)}
+
+.csum{font-size:13px;line-height:1.72;color:var(--muted);margin-bottom:11px}
+.cwhy{background:var(--blue-l);border-left:3px solid var(--blue);padding:8px 12px;border-radius:0 8px 8px 0;margin-bottom:13px}
+.cwhy-lbl{font-size:9.5px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+.cwhy-txt{font-size:12.5px;color:#1E40AF;line-height:1.55;font-style:italic}
+
+.cftr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.cmeta{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.src-tag{font-size:11px;font-weight:600;color:var(--hint);background:var(--slate-m);padding:2px 8px;border-radius:5px}
+.cat-tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px;text-transform:uppercase;letter-spacing:.04em}
+.pub-t{font-size:11px;color:var(--hint)}
+.src-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 13px;background:var(--ink);color:#fff;border-radius:7px;font-size:12px;font-weight:500;text-decoration:none;transition:opacity .15s}
+.src-btn:hover{opacity:.72}
+.src-btn svg{width:11px;height:11px;opacity:.7}
+
+/* ── TABS ── */
+.tabs-wrap{margin-bottom:20px}
+.tabs{display:flex;gap:4px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:4px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:7px;font-size:13px;font-weight:500;color:var(--muted);border:none;background:transparent;cursor:pointer;white-space:nowrap;transition:all .18s}
+.tab:hover{color:var(--ink);background:var(--slate-m)}
+.tab.on{background:var(--ink);color:#fff}
+.tcnt{font-size:11px;background:rgba(0,0,0,.07);padding:1px 6px;border-radius:10px}
+.tab.on .tcnt{background:rgba(255,255,255,.18)}
+
+/* ── LAYOUT ── */
+.lay{display:grid;grid-template-columns:1fr 272px;gap:22px;align-items:start}
+.ngrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(308px,1fr));gap:13px}
+
+/* ── SIDEBAR ── */
+.side{position:sticky;top:68px;display:flex;flex-direction:column;gap:14px}
+.sc{background:var(--card);border-radius:var(--r);border:1px solid var(--border);padding:18px 20px;box-shadow:var(--s0)}
+.sc-tit{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:14px}
+.tri{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.tri:last-child{border:none;padding-bottom:0}
+.tri-ico{font-size:15px;flex-shrink:0;margin-top:1px}
+.tri-body{font-size:12.5px;color:var(--muted);line-height:1.55}
+.tri-body strong{color:var(--ink);font-weight:500;display:block;margin-bottom:2px;font-size:13px}
+.tcloud{display:flex;flex-wrap:wrap;gap:6px}
+.tpill{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;transition:transform .12s}
+.tpill:hover{transform:translateY(-1px)}
+
+/* ── SKELETON ── */
+.sk-card{background:var(--card);border-radius:var(--r);border:1px solid var(--border);padding:20px}
+.sk{background:linear-gradient(90deg,#EEF2F7 25%,#E4EAF2 50%,#EEF2F7 75%);background-size:200% 100%;animation:shim 1.5s infinite;border-radius:6px}
+@keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.sk-h1{height:17px;width:88%;margin-bottom:8px}
+.sk-h2{height:17px;width:62%;margin-bottom:14px}
+.sk-l{height:13px;width:100%;margin-bottom:6px}
+.sk-ls{height:13px;width:72%;margin-bottom:16px}
+.sk-b{height:26px;width:90px;border-radius:7px}
+
+/* ── EMPTY / ERROR ── */
+.state-box{text-align:center;padding:56px 20px;grid-column:1/-1}
+.state-box .ico{font-size:38px;margin-bottom:12px}
+.state-box h3{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;margin-bottom:6px}
+.state-box p{font-size:14px;color:var(--muted)}
+
+/* ── SYNC STATUS BANNER ── */
+.sync-banner{display:none;align-items:center;gap:10px;padding:10px 16px;background:var(--green-l);border:1px solid var(--green-m);border-radius:10px;margin-bottom:22px;font-size:13px;color:#065F46}
+.sync-banner.show{display:flex}
+.sync-banner svg{flex-shrink:0}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:#fff;padding:11px 22px;border-radius:30px;font-size:13px;font-weight:500;z-index:1000;transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .35s;opacity:0;white-space:nowrap;box-shadow:0 8px 28px rgba(0,0,0,.25)}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+/* ── SETUP MODAL ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(15,23,42,.7);z-index:800;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--card);border-radius:20px;padding:32px;max-width:520px;width:calc(100% - 40px);box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.modal h2{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:6px}
+.modal-sub{font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.6}
+.modal-field{margin-bottom:16px}
+.modal-field label{display:block;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.modal-field input{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);outline:none;transition:border-color .2s}
+.modal-field input:focus{border-color:var(--blue)}
+.modal-actions{display:flex;gap:10px;margin-top:8px}
+.btn-primary{flex:1;padding:11px;background:var(--ink);color:#fff;border:none;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:opacity .15s}
+.btn-primary:hover{opacity:.82}
+.btn-secondary{padding:11px 20px;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer}
+.modal-note{font-size:12px;color:var(--hint);margin-top:16px;line-height:1.6;background:var(--slate-l);padding:10px 14px;border-radius:8px}
+.modal-note code{font-family:monospace;background:var(--slate-m);padding:1px 5px;border-radius:4px;font-size:11px}
+
+@media(max-width:960px){.lay{grid-template-columns:1fr}.side{position:static}.t3{grid-template-columns:1fr;grid-template-rows:auto}.t3>:first-child{grid-row:auto}.hdr-center{display:none}}
+@media(max-width:620px){.main{padding:18px 14px}.ngrid{grid-template-columns:1fr}.hdr-in{padding:0 14px}.hdr-actions{gap:5px}.ibtn span{display:none}.ibtn{padding:8px 10px}}
+</style>
+</head>
+<body>
+
+<!-- ══ BOOT SPLASH ══ -->
+<div id="boot">
+  <div class="b-logo">
+    <div class="b-logo-dot"></div>
+    BREAKING<span>NEWS</span>
+  </div>
+  <div class="b-track-wrap">
+    <div class="b-track"><div class="b-fill" id="bfill"></div></div>
+    <div class="b-msg" id="bmsg">初始化…</div>
+  </div>
+  <div class="b-steps">
+    <div class="b-step" id="bs1"><div class="b-step-icon">○</div>讀取快取</div>
+    <div class="b-step" id="bs2"><div class="b-step-icon">○</div>同步資料</div>
+    <div class="b-step" id="bs3"><div class="b-step-icon">○</div>渲染頁面</div>
+  </div>
+</div>
+
+<!-- ══ SETUP MODAL ══ -->
+<div class="modal-bg" id="setupModal">
+  <div class="modal">
+    <h2>⚙️ 設定 Google Sheet 連接</h2>
+    <p class="modal-sub">貼上你的 Google Apps Script Web App URL，用來讀寫新聞快取。設定後會存在瀏覽器 localStorage。</p>
+    <div class="modal-field">
+      <label>Apps Script Web App URL</label>
+      <input type="url" id="gasUrl" placeholder="https://script.google.com/macros/s/…/exec" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="saveGasUrl()">儲存並連接</button>
+      <button class="btn-secondary" onclick="skipSetup()">暫時略過</button>
+    </div>
+    <div class="modal-note">
+      尚未建立？請參考附件 <code>apps-script.gs</code>，貼入 Google Sheet 的 Apps Script 並部署為 Web App（權限：Anyone）。
+    </div>
+  </div>
+</div>
+
+<!-- ══ HEADER ══ -->
+<header class="hdr">
+  <div class="hdr-in">
+    <a class="logo" href="#">
+      <div class="logo-dot"></div>
+      <div class="logo-txt">BREAKING<em>NEWS</em></div>
+    </a>
+
+    <div class="hdr-center">
+      <div class="meta-pill" id="metaUpdated" style="display:none">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" stroke="#94A3B8" stroke-width="1.2"/><path d="M5 2.5V5l1.5 1.5" stroke="#94A3B8" stroke-width="1.2" stroke-linecap="round"/></svg>
+        最後更新 <strong id="lastUpdated">—</strong>
+      </div>
+      <div class="meta-pill" id="metaSynced" style="display:none">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M8.5 5A3.5 3.5 0 1 1 5 1.5" stroke="#94A3B8" stroke-width="1.2" stroke-linecap="round"/><path d="M6.5 1.5h2v2" stroke="#94A3B8" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        最後同步 <strong id="lastSynced">—</strong>
+      </div>
+    </div>
+
+    <div class="hdr-actions">
+      <!-- Reload -->
+      <button class="ibtn ibtn-reload" id="btnReload" onclick="doReload()" title="從 Google Sheet 讀取快取">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-5.1"/>
+        </svg>
+        <span>Reload</span>
+      </button>
+
+      <div class="btn-divider"></div>
+
+      <!-- Quick -->
+      <button class="ibtn ibtn-quick" id="btnQuick" onclick="doRefresh('quick')" title="補入最新5則頭條（呼叫 AI API）">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+        </svg>
+        <span>Quick</span>
+      </button>
+
+      <!-- Full -->
+      <button class="ibtn ibtn-full" id="btnFull" onclick="doRefresh('full')" title="重抓全部20則（呼叫 AI API）">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/>
+        </svg>
+        <span>Full</span>
+      </button>
+
+      <!-- Settings -->
+      <button class="ibtn ibtn-reload" onclick="openSetup()" title="設定 Google Sheet">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ══ MAIN ══ -->
+<main class="main" id="main" style="display:none">
+  <div class="sync-banner" id="syncBanner">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    <span id="syncBannerMsg">已從 Google Sheet 快取讀取資料</span>
+  </div>
+
+  <div class="tbar" id="tbar"><span class="tbar-lbl">熱門主題</span></div>
+
+  <div id="sec-top3">
+    <div class="sec-lbl">👑 今日重點 — Top 3 Headlines</div>
+    <div class="t3" id="t3grid"></div>
+  </div>
+
+  <div class="lay">
+    <div>
+      <div class="tabs-wrap">
+        <div class="tabs">
+          <button class="tab on" data-c="all" onclick="sw(this,'all')">🌐 全部 <span class="tcnt" id="ca">—</span></button>
+          <button class="tab" data-c="geo" onclick="sw(this,'geo')">🌍 Geo <span class="tcnt" id="cg">—</span></button>
+          <button class="tab" data-c="econ" onclick="sw(this,'econ')">💰 Economy <span class="tcnt" id="ce">—</span></button>
+          <button class="tab" data-c="conflict" onclick="sw(this,'conflict')">⚔️ Conflict <span class="tcnt" id="cc">—</span></button>
+          <button class="tab" data-c="tech" onclick="sw(this,'tech')">🧠 Tech/AI <span class="tcnt" id="ct">—</span></button>
+          <button class="tab" data-c="macro" onclick="sw(this,'macro')">📊 Macro <span class="tcnt" id="cm">—</span></button>
+        </div>
+      </div>
+      <div class="ngrid" id="ngrid"></div>
+    </div>
+    <aside class="side">
+      <div class="sc"><div class="sc-tit">📈 7天延續議題</div><div id="trends-body"></div></div>
+      <div class="sc"><div class="sc-tit">🏷 主題標籤</div><div class="tcloud" id="tcloud"></div></div>
+    </aside>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ════════════════════════════════════════════
+   CONFIG & STATE
+════════════════════════════════════════════ */
+const LS_GAS = 'bn_gas_url';
+const LS_NEWS = 'bn_news_cache';
+const LS_SYNCED = 'bn_synced_at';
+const LS_UPDATED = 'bn_updated_at';
+
+let NEWS = [], CAT = 'all', ATAG = null;
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+function getGasUrl() { return localStorage.getItem(LS_GAS) || ''; }
+
+/* ════════════════════════════════════════════
+   UTILS
+════════════════════════════════════════════ */
+function nowStr() {
+  const d = new Date(), p = n => String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+function setUpdated(t) {
+  const s = t || nowStr();
+  localStorage.setItem(LS_UPDATED, s);
+  document.getElementById('lastUpdated').textContent = s;
+  document.getElementById('metaUpdated').style.display = '';
+}
+function setSynced(t) {
+  if (!t) return;
+  localStorage.setItem(LS_SYNCED, t);
+  document.getElementById('lastSynced').textContent = t;
+  document.getElementById('metaSynced').style.display = '';
+}
+function showToast(msg, ms = 3000) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), ms);
+}
+function syncBanner(msg) {
+  document.getElementById('syncBannerMsg').textContent = msg;
+  document.getElementById('syncBanner').classList.add('show');
+  setTimeout(() => document.getElementById('syncBanner').classList.remove('show'), 4000);
+}
+
+/* ════════════════════════════════════════════
+   SETUP MODAL
+════════════════════════════════════════════ */
+function openSetup() { document.getElementById('setupModal').classList.add('open'); }
+function closeSetup() { document.getElementById('setupModal').classList.remove('open'); }
+function skipSetup() { closeSetup(); }
+function saveGasUrl() {
+  const url = document.getElementById('gasUrl').value.trim();
+  if (!url.startsWith('https://script.google.com')) {
+    showToast('⚠️ URL 格式不正確，請確認');
+    return;
+  }
+  localStorage.setItem(LS_GAS, url);
+  closeSetup();
+  showToast('✅ 已儲存 Apps Script URL');
+}
+
+/* ════════════════════════════════════════════
+   RENDER HELPERS
+════════════════════════════════════════════ */
+const CAT_META = {
+  geo:     {bg:'#EFF6FF',c:'#1D4ED8',l:'🌍 Geo'},
+  econ:    {bg:'#FFFBEB',c:'#B45309',l:'💰 Economy'},
+  conflict:{bg:'#FEF2F2',c:'#991B1B',l:'⚔️ Conflict'},
+  tech:    {bg:'#F5F3FF',c:'#6D28D9',l:'🧠 Tech/AI'},
+  macro:   {bg:'#ECFDF5',c:'#065F46',l:'📊 Macro'},
+};
+function catTag(c) {
+  const m = CAT_META[c] || {bg:'#F1F5F9',c:'#475569',l:'📰 News'};
+  return `<span class="cat-tag" style="background:${m.bg};color:${m.c}">${m.l}</span>`;
+}
+function impactBadge(i) {
+  if (i==='high') return '<span class="ibadge i-hi">🔴 高影響</span>';
+  if (i==='mid')  return '<span class="ibadge i-md">🟡 中影響</span>';
+  return '<span class="ibadge i-lo">⚪ 低影響</span>';
+}
+function card(n, hero=false) {
+  return `<div class="card${hero?' hero':''}">
+    <div class="chdr">
+      <div class="ctit">${n.title_en||n.title||''}</div>
+      ${impactBadge(n.impact)}
+    </div>
+    <p class="csum">${n.summary_zh||''}</p>
+    <div class="cwhy">
+      <div class="cwhy-lbl">Why it matters</div>
+      <div class="cwhy-txt">${n.why_zh||''}</div>
+    </div>
+    <div class="cftr">
+      <div class="cmeta">
+        <span class="src-tag">${n.source||''}</span>
+        ${catTag(n.cat)}
+        <span class="pub-t">🕐 ${n.time||''}</span>
+      </div>
+      <a class="src-btn" href="${n.sourceUrl||'#'}" target="_blank" rel="noopener">
+        Source
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 11L11 1M11 1H5M11 1v6"/></svg>
+      </a>
+    </div>
+  </div>`;
+}
+function skCard(hero=false) {
+  return `<div class="sk-card${hero?' card hero':''}">
+    <div class="sk sk-h1"></div><div class="sk sk-h2"></div>
+    <div class="sk sk-l"></div><div class="sk sk-l"></div>
+    <div class="sk sk-ls"></div><div class="sk sk-b"></div>
+  </div>`;
+}
+
+/* ════════════════════════════════════════════
+   RENDER PAGE
+════════════════════════════════════════════ */
+function filtered() {
+  let l = NEWS;
+  if (ATAG) l = l.filter(n => (n.tags||[]).includes(ATAG));
+  if (CAT !== 'all') l = l.filter(n => n.cat === CAT);
+  return l;
+}
+function updateCounts() {
+  document.getElementById('ca').textContent = NEWS.length;
+  [['g','geo'],['e','econ'],['c','conflict'],['t','tech'],['m','macro']].forEach(([k,v]) => {
+    const el = document.getElementById('c'+k);
+    if (el) el.textContent = NEWS.filter(n=>n.cat===v).length;
+  });
+}
+function renderTop3() {
+  const top = NEWS.filter(n=>n.top3).slice(0,3);
+  document.getElementById('t3grid').innerHTML = top.length
+    ? top.map((n,i) => card(n, i===0)).join('')
+    : [skCard(true), skCard(), skCard()].join('');
+}
+function renderGrid() {
+  const g = document.getElementById('ngrid');
+  const l = filtered();
+  if (!l.length) {
+    g.innerHTML = `<div class="state-box"><div class="ico">🔍</div><h3>此分類暫無新聞</h3><p>試試切換頁籤或清除標籤篩選</p></div>`;
+    return;
+  }
+  g.innerHTML = l.map(n => card(n)).join('');
+}
+function renderTbar() {
+  const freq = {};
+  NEWS.forEach(n => (n.tags||[]).forEach(t => { freq[t] = (freq[t]||0)+1; }));
+  const top = Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,7);
+  const cls = ['c-r','c-a','c-b','c-p','c-g','c-o','c-a'];
+  const emo = ['🔴','💰','🤖','🚀','📊','⚖️','🌊'];
+  document.getElementById('tbar').innerHTML =
+    '<span class="tbar-lbl">熱門主題</span>' +
+    top.map(([t],i) => `<span class="ttag ${cls[i%cls.length]}${ATAG===t?' active':''}" onclick="ftag('${t}')">${emo[i]} ${t}</span>`).join('');
+}
+function renderTags() {
+  const freq = {};
+  NEWS.forEach(n => (n.tags||[]).forEach(t => { freq[t] = (freq[t]||0)+1; }));
+  const top = Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,14);
+  const cls = ['c-r','c-b','c-a','c-p','c-g','c-o'];
+  document.getElementById('tcloud').innerHTML =
+    top.map(([t],i) => `<span class="tpill ${cls[i%cls.length]}${ATAG===t?' active':''}" onclick="ftag('${t}')">${t}</span>`).join('');
+}
+function renderTrends() {
+  const D = [
+    {i:'🔥',t:'中東衝突持續升溫',d:'霍爾木茲封鎖持續，談判陷僵局'},
+    {i:'📉',t:'全球增長遭下修',d:'IMF警告能源衝擊拖累2026年GDP'},
+    {i:'🤖',t:'AI軍備競賽加速',d:'美中差距縮小，模型性能競爭激烈'},
+    {i:'🚀',t:'北韓接連飛彈測試',d:'宣稱無限擴大核武庫，亞太升溫'},
+    {i:'⚖️',t:'貿易戰重塑供應鏈',d:'美中貿易跌30%，東協從中受益'},
+  ];
+  document.getElementById('trends-body').innerHTML =
+    D.map(d=>`<div class="tri"><span class="tri-ico">${d.i}</span><div class="tri-body"><strong>${d.t}</strong>${d.d}</div></div>`).join('');
+}
+function renderAll() {
+  renderTop3(); renderGrid(); renderTbar(); renderTags(); updateCounts();
+}
+
+/* ════════════════════════════════════════════
+   TAB / TAG
+════════════════════════════════════════════ */
+function sw(btn, c) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+  CAT = c;
+  renderGrid();
+}
+function ftag(t) {
+  ATAG = (ATAG===t) ? null : t;
+  CAT = 'all';
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+  document.querySelector('[data-c="all"]').classList.add('on');
+  renderGrid(); renderTags(); renderTbar();
+}
+
+/* ════════════════════════════════════════════
+   GOOGLE SHEET (Apps Script)
+════════════════════════════════════════════ */
+async function sheetRead() {
+  const url = getGasUrl();
+  if (!url) return null;
+  try {
+    const r = await fetch(`${url}?action=read`, { method:'GET', mode:'cors' });
+    return await r.json();
+  } catch(e) { console.warn('Sheet read error:', e); return null; }
+}
+
+async function sheetWrite(newsArr) {
+  const url = getGasUrl();
+  if (!url) return;
+  try {
+    await fetch(url, {
+      method: 'POST',
+      mode: 'cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action:'write', news: newsArr })
+    });
+  } catch(e) { console.warn('Sheet write error:', e); }
+}
+
+/* ════════════════════════════════════════════
+   BOOT SEQUENCE
+════════════════════════════════════════════ */
+function bstep(n, msg, pct) {
+  ['bs1','bs2','bs3'].forEach((id,i) => {
+    const el = document.getElementById(id);
+    const icon = el.querySelector('.b-step-icon');
+    if (i < n-1) { el.className='b-step ok'; icon.textContent='✓'; }
+    else if (i===n-1) { el.className='b-step on'; icon.textContent='●'; }
+    else { el.className='b-step'; icon.textContent='○'; }
+  });
+  document.getElementById('bmsg').textContent = msg;
+  document.getElementById('bfill').style.width = pct+'%';
+}
+
+async function boot() {
+  bstep(1,'檢查本地快取…', 15);
+  await sleep(200);
+
+  // 1. 先嘗試讀 localStorage 快速顯示
+  const localRaw = localStorage.getItem(LS_NEWS);
+  const localNews = localRaw ? JSON.parse(localRaw) : null;
+
+  bstep(2,'讀取 Google Sheet 快取…', 45);
+
+  let sheetData = null;
+  const gasUrl = getGasUrl();
+
+  if (!gasUrl) {
+    // 沒設定 GAS — 直接問要不要設定
+    bstep(3,'準備頁面…', 90);
+    await sleep(200);
+    if (localNews && localNews.length) {
+      NEWS = localNews;
+      finishBoot();
+      showToast('ℹ️ 未連接 Google Sheet，顯示本地快取');
+    } else {
+      finishBoot(true); // 顯示頁面後自動觸發 Full refresh
+    }
+    return;
+  }
+
+  // 2. 嘗試從 Google Sheet 讀
+  const sheet = await sheetRead();
+  if (sheet && sheet.ok && sheet.data && sheet.data.length > 0) {
+    NEWS = sheet.data;
+    bstep(3,'渲染頁面…', 90);
+    localStorage.setItem(LS_NEWS, JSON.stringify(NEWS));
+    const syncedAt = sheet.syncedAt || sheet.data[0]?.syncedAt;
+    setSynced(syncedAt);
+    const upd = localStorage.getItem(LS_UPDATED);
+    if (upd) setUpdated(upd);
+    await sleep(180);
+    finishBoot();
+    syncBanner(`已從 Google Sheet 讀取 ${NEWS.length} 則新聞`);
+  } else if (localNews && localNews.length) {
+    // Sheet 空或失敗 — 用 local cache
+    NEWS = localNews;
+    bstep(3,'渲染頁面…', 90);
+    await sleep(180);
+    finishBoot();
+    showToast('ℹ️ 已讀取本地快取（Sheet 尚無資料）');
+  } else {
+    // 完全空 — 自動 Full refresh
+    bstep(3,'首次載入，抓取新聞…', 90);
+    await sleep(200);
+    finishBoot(true);
+  }
+}
+
+function finishBoot(autoFetch=false) {
+  document.getElementById('bfill').style.width = '100%';
+  const boot = document.getElementById('boot');
+  boot.classList.add('out');
+  document.getElementById('main').style.display = '';
+  setTimeout(() => boot.remove(), 560);
+  renderAll(); renderTrends();
+  if (autoFetch) {
+    setTimeout(() => doRefresh('full'), 400);
+  }
+}
+
+/* ════════════════════════════════════════════
+   RELOAD — 只讀 Google Sheet，不打 AI API
+════════════════════════════════════════════ */
+async function doReload() {
+  const btn = document.getElementById('btnReload');
+  const icon = btn.querySelector('.btn-icon');
+  btn.disabled = true;
+  icon.classList.add('spinning');
+
+  const gasUrl = getGasUrl();
+  if (!gasUrl) {
+    showToast('⚠️ 請先設定 Google Sheet URL（點右上角 ⚙️）');
+    btn.disabled = false; icon.classList.remove('spinning');
+    return;
+  }
+
+  showToast('🔄 從 Google Sheet 讀取快取…', 99999);
+  const sheet = await sheetRead();
+  if (sheet && sheet.ok && sheet.data && sheet.data.length > 0) {
+    NEWS = sheet.data;
+    localStorage.setItem(LS_NEWS, JSON.stringify(NEWS));
+    setSynced(sheet.syncedAt || sheet.data[0]?.syncedAt);
+    renderAll();
+    showToast(`✅ 已載入 ${NEWS.length} 則新聞（快取）`);
+    syncBanner(`Reload 完成，共 ${NEWS.length} 則新聞`);
+  } else {
+    showToast('⚠️ Google Sheet 無資料，請先執行 Full refresh');
+  }
+  btn.disabled = false; icon.classList.remove('spinning');
+}
+
+/* ════════════════════════════════════════════
+   REFRESH — 呼叫 Claude API
+════════════════════════════════════════════ */
+async function doRefresh(mode) {
+  const bQ = document.getElementById('btnQuick');
+  const bF = document.getElementById('btnFull');
+  const bR = document.getElementById('btnReload');
+  [bQ, bF, bR].forEach(b => b.disabled = true);
+
+  const icon = (mode==='quick' ? bQ : bF).querySelector('.btn-icon');
+  icon.classList.add('spinning');
+
+  if (mode==='full') {
+    document.getElementById('t3grid').innerHTML = [skCard(true), skCard(), skCard()].join('');
+    document.getElementById('ngrid').innerHTML = Array(6).fill(skCard()).join('');
+    showToast('🔁 Full Refresh：呼叫 AI 重抓全部新聞…', 99999);
+  } else {
+    showToast('⚡ Quick Refresh：搜尋最新頭條…', 99999);
+  }
+
+  try {
+    const existTitles = mode==='quick' ? NEWS.map(n=>n.title_en||n.title||'').join('\n') : null;
+    const fresh = await callClaudeAPI(mode, existTitles);
+
+    if (mode==='full') {
+      NEWS = fresh.map((n,i)=>({...n, id:i+1}));
+      showToast(`✅ 已更新 ${NEWS.length} 則頭條`);
+    } else {
+      const exist = new Set(NEWS.map(n=>(n.title_en||n.title||'').toLowerCase()));
+      const newOnes = fresh.filter(n=>!exist.has((n.title_en||n.title||'').toLowerCase()));
+      if (newOnes.length) {
+        const mx = Math.max(...NEWS.map(n=>n.id||0), 0);
+        NEWS = [...newOnes.map((n,i)=>({...n,id:mx+i+1,top3:false,hero:false})), ...NEWS].slice(0,25);
+        showToast(`✅ 新增 ${newOnes.length} 則新聞`);
+      } else {
+        showToast('✅ 已是最新，無新頭條');
+      }
+    }
+
+    const now = nowStr();
+    setUpdated(now);
+    localStorage.setItem(LS_NEWS, JSON.stringify(NEWS));
+    renderAll();
+
+    // 寫入 Google Sheet
+    const gasUrl = getGasUrl();
+    if (gasUrl) {
+      showToast('☁️ 同步至 Google Sheet…', 2000);
+      const res = await sheetWrite(NEWS);
+      setSynced(now);
+      syncBanner(`已同步 ${NEWS.length} 則新聞至 Google Sheet`);
+    }
+
+  } catch(e) {
+    console.error(e);
+    showToast('⚠️ 更新失敗：'+(e.message||'未知錯誤'));
+    renderAll();
+  }
+
+  [bQ, bF, bR].forEach(b => b.disabled = false);
+  icon.classList.remove('spinning');
+}
+
+/* ════════════════════════════════════════════
+   CLAUDE API
+════════════════════════════════════════════ */
+async function callClaudeAPI(mode, existTitles=null) {
+  const date = new Date().toISOString().split('T')[0];
+  const n = mode==='quick' ? 6 : 20;
+  const avoidBlock = (existTitles && mode==='quick')
+    ? `EXISTING headlines (skip duplicates):\n${existTitles}\n\nReturn ONLY new stories not in the list (max ${n}).`
+    : `Return exactly ${n} diverse stories.`;
+
+  const sys = `You are an elite international news curator. Today is ${date}.
+Search the latest 72 hours of international headlines from: Reuters, AP, BBC, CNN, Bloomberg, Financial Times, The Guardian, Washington Post, Deutsche Welle, The Economist, NYT, WSJ.
+${avoidBlock}
+DEDUP RULE: On any single topic keep only the single most representative story.
+CATEGORIES: at least 1 of each: geo, econ, conflict, tech, macro.
+OUTPUT: valid JSON array ONLY. No markdown fences, no text outside the array.
+Schema per item:
+{"id":integer,"cat":"geo"|"econ"|"conflict"|"tech"|"macro","impact":"high"|"mid"|"low","top3":boolean,"hero":boolean,"title_en":"English headline","summary_zh":"3-5 sentence Chinese summary","why_zh":"1-sentence Chinese implication/risk (15-25 chars)","source":"Source name","sourceUrl":"Direct article URL","time":"YYYY-MM-DD HH:mm","tags":["中文tag1","中文tag2"]}
+Rules: top3=true for top 3 only; hero=true for #1 only.`;
+
+  const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      tools: [{type:'web_search_20250305',name:'web_search'}],
+      system: sys,
+      messages: [{role:'user',content:`Fetch latest ${n} international headlines as JSON for ${date}.`}]
+    })
+  });
+  if (!resp.ok) throw new Error(`API HTTP ${resp.status}`);
+  const data = await resp.json();
+  const text = (data.content||[]).map(b=>b.type==='text'?b.text:'').join('');
+  const m = text.match(/\[[\s\S]*\]/);
+  if (!m) throw new Error('No JSON array in response');
+  return JSON.parse(m[0]);
+}
+
+/* ════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════ */
+// Restore meta from localStorage
+const storedUpd = localStorage.getItem(LS_UPDATED);
+const storedSync = localStorage.getItem(LS_SYNCED);
+if (storedUpd) { document.getElementById('lastUpdated').textContent = storedUpd; document.getElementById('metaUpdated').style.display=''; }
+if (storedSync) { document.getElementById('lastSynced').textContent = storedSync; document.getElementById('metaSynced').style.display=''; }
+
+// Check if GAS url is set — if not, pre-fill modal input
+const existingGas = getGasUrl();
+if (!existingGas) {
+  // Will prompt after boot
+}
+
+boot();
+</script>
+</body>
+</html>
