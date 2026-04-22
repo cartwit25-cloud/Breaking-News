@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Breaking News</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 <style>
 :root{
   --red:#E8342A;--red-l:#FFF0EF;--red-m:#FFDAD7;
@@ -46,14 +46,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-
 .logo-dot{width:8px;height:8px;background:var(--red);border-radius:50%;animation:pdot 1.6s ease-in-out infinite}
 .logo-txt{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:#fff;letter-spacing:-.5px}
 .logo-txt em{color:var(--red);font-style:normal}
-.hdr-mid{display:flex;align-items:center;gap:12px}
+.hdr-mid{display:flex;align-items:center;gap:10px}
 .mpill{display:flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:20px;font-size:11px;color:#94A3B8;white-space:nowrap}
 .mpill strong{color:#CBD5E1;font-weight:500}
 .hdr-btns{display:flex;align-items:center;gap:7px}
 .vdiv{width:1px;height:22px;background:rgba(255,255,255,.1)}
 
 /* ICON BUTTONS */
-.ibtn{display:inline-flex;align-items:center;gap:7px;padding:7px 15px;border-radius:9px;border:1px solid;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:background .2s,border-color .2s,opacity .2s;white-space:nowrap}
+.ibtn{display:inline-flex;align-items:center;gap:7px;padding:7px 15px;border-radius:9px;border:1px solid;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:background .2s,opacity .2s;white-space:nowrap}
 .ibtn:disabled{opacity:.35;cursor:not-allowed}
 .ibtn svg{width:16px;height:16px;flex-shrink:0}
 .ibtn-reload{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.14);color:#CBD5E1}
@@ -154,7 +154,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-
 .sk-ls{height:13px;width:72%;margin-bottom:16px}
 .sk-b{height:26px;width:90px;border-radius:7px}
 
-/* STATUS / EMPTY */
+/* STATE BOX */
 .state-box{text-align:center;padding:56px 20px;grid-column:1/-1}
 .state-box .ico{font-size:38px;margin-bottom:12px}
 .state-box h3{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;margin-bottom:6px}
@@ -170,26 +170,31 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:#fff;padding:11px 22px;border-radius:30px;font-size:13px;font-weight:500;z-index:1000;transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .35s;opacity:0;white-space:nowrap;box-shadow:0 8px 28px rgba(0,0,0,.25)}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 
-/* SETUP MODAL */
+/* ── SETUP MODAL ── */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(15,23,42,.72);z-index:800;align-items:center;justify-content:center;padding:20px}
 .modal-bg.open{display:flex}
-.modal{background:var(--card);border-radius:20px;padding:32px;max-width:500px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.28);position:relative}
-.modal-close{position:absolute;top:16px;right:16px;width:30px;height:30px;border-radius:50%;border:1px solid var(--border);background:var(--slate-l);color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;line-height:1;transition:background .15s,color .15s}
-.modal-close:hover{background:var(--slate-m);color:var(--ink)}
-.modal-hdr{margin-bottom:6px;padding-right:28px}
-.modal-hdr .prefix{font-family:'DM Sans',sans-serif;font-size:20px;font-weight:800;color:var(--ink)}
-.modal-hdr .gs-name{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;background:linear-gradient(135deg,#34A853 0%,#4285F4 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-.3px}
-.modal-sub{font-size:13.5px;color:var(--muted);margin-bottom:22px;line-height:1.65}
-.mfield{margin-bottom:14px}
-.mfield label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+.modal{background:var(--card);border-radius:20px;padding:32px;max-width:460px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.28);position:relative}
+
+/* Close button */
+.modal-x{position:absolute;top:16px;right:16px;width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:var(--slate-l);color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;line-height:1;transition:background .15s,color .15s;font-family:'DM Sans',sans-serif}
+.modal-x:hover{background:var(--slate-m);color:var(--ink)}
+
+/* Title — "Google Sheet" in Playfair Display, black, understated */
+.modal-title{font-size:20px;font-weight:800;color:var(--ink);margin-bottom:6px;padding-right:32px;line-height:1.3}
+.modal-title .gs{font-family:'Playfair Display',serif;font-weight:700;font-size:21px;color:var(--ink);letter-spacing:-.2px}
+
+.modal-sub{font-size:13px;color:var(--muted);margin-bottom:22px;line-height:1.6}
+.mfield{margin-bottom:4px}
+.mfield label{display:block;font-size:11px;font-weight:600;color:var(--hint);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
 .mfield input{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);outline:none;transition:border-color .2s;background:#fff}
-.mfield input:focus{border-color:var(--blue)}
-.mfield input[type=password]{font-family:monospace;letter-spacing:.05em}
-.mdivider{height:1px;background:var(--border);margin:18px 0}
-.mactions{display:flex;gap:10px;margin-top:18px}
+.mfield input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+.mfield input::placeholder{color:var(--hint)}
+.mfree{font-size:11.5px;color:#059669;background:var(--green-l);border:1px solid var(--green-m);border-radius:7px;padding:8px 12px;margin:14px 0 0;display:flex;align-items:center;gap:6px}
+.mactions{display:flex;gap:10px;margin-top:20px}
 .mbtn-p{flex:1;padding:11px;background:var(--ink);color:#fff;border:none;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:opacity .15s}
 .mbtn-p:hover{opacity:.82}
-.mbtn-s{padding:11px 18px;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer}
+.mbtn-s{padding:11px 18px;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;transition:background .15s}
+.mbtn-s:hover{background:var(--slate-l)}
 
 @media(max-width:960px){.lay{grid-template-columns:1fr}.side{position:static}.t3{grid-template-columns:1fr;grid-template-rows:auto}.t3>:first-child{grid-row:auto}.hdr-mid{display:none}}
 @media(max-width:620px){.main{padding:18px 14px}.ngrid{grid-template-columns:1fr}.hdr-in{padding:0 14px}.hdr-btns{gap:5px}.ibtn span{display:none}.ibtn{padding:7px 9px}.ibtn-gear{display:none}}
@@ -214,20 +219,18 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-
 <!-- SETUP MODAL -->
 <div class="modal-bg" id="setupModal">
   <div class="modal">
-    <button class="modal-close" onclick="closeModal()" aria-label="關閉">✕</button>
-    <div class="modal-hdr">
-      <span class="prefix">⚙️ 連接 </span><span class="gs-name">Google Sheet</span>
+    <button class="modal-x" onclick="closeModal()">✕</button>
+    <div class="modal-title">
+      ⚙️ 連接 <span class="gs">Google Sheet</span>
     </div>
-    <p class="modal-sub">設定後存於瀏覽器，重新整理不需再輸入。</p>
-
-    <div class="mfield">
-      <label>Anthropic API Key</label>
-      <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-…" autocomplete="off"/>
-    </div>
-    <div class="mdivider"></div>
+    <p class="modal-sub">貼上 Apps Script Web App URL，網頁透過它讀寫新聞快取。</p>
     <div class="mfield">
       <label>Apps Script Web App URL</label>
       <input type="url" id="gasInput" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off"/>
+    </div>
+    <div class="mfree">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      完全免費，不需要任何 API Key
     </div>
     <div class="mactions">
       <button class="mbtn-p" onclick="saveSettings()">儲存並連接</button>
@@ -251,25 +254,21 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-
       </div>
     </div>
     <div class="hdr-btns">
-      <!-- Reload -->
-      <button class="ibtn ibtn-reload" id="btnR" onclick="doReload()" title="從 Google Sheet 讀取快取（不呼叫 AI）">
+      <button class="ibtn ibtn-reload" id="btnR" onclick="doReload()" title="從 Google Sheet 讀取快取">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-5.1"/></svg>
         <span>Reload</span>
       </button>
       <div class="vdiv"></div>
-      <!-- Quick -->
-      <button class="ibtn ibtn-quick" id="btnQ" onclick="doRefresh('quick')" title="補入最新5則（呼叫 AI API）">
+      <button class="ibtn ibtn-quick" id="btnQ" onclick="doRefresh('quick')" title="補入最新5則（抓 RSS）">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
         <span>Quick</span>
       </button>
-      <!-- Full -->
-      <button class="ibtn ibtn-full" id="btnF" onclick="doRefresh('full')" title="重抓全部20則（呼叫 AI API）">
+      <button class="ibtn ibtn-full" id="btnF" onclick="doRefresh('full')" title="重抓全部20則（抓 RSS）">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
         <span>Full</span>
       </button>
       <div class="vdiv"></div>
-      <!-- Settings -->
-      <button class="ibtn ibtn-gear" onclick="openModal()" title="設定 Google Sheet">
+      <button class="ibtn ibtn-gear" onclick="openModal()" title="設定">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
     </div>
@@ -282,14 +281,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
     <span id="syncMsg">已載入快取</span>
   </div>
-
   <div class="tbar" id="tbar"><span class="tbar-lbl">熱門主題</span></div>
-
   <div>
     <div class="slbl">👑 今日重點 — Top 3 Headlines</div>
     <div class="t3" id="t3grid"></div>
   </div>
-
   <div class="lay">
     <div>
       <div class="tbwrap">
@@ -315,60 +311,38 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-
 
 <script>
 /* ═══ CONSTANTS ═══ */
-const LS = { GAS:'bn_gas', APIKEY:'bn_apikey', NEWS:'bn_news', UPD:'bn_upd', SYNC:'bn_sync' };
+const LS = { GAS:'bn_gas', NEWS:'bn_news', UPD:'bn_upd', SYNC:'bn_sync' };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-
-/* ═══ STATE ═══ */
 let NEWS = [], CAT = 'all', ATAG = null;
 
-/* ═══ STORAGE HELPERS ═══ */
-function getGas() { return localStorage.getItem(LS.GAS) || ''; }
-function getApiKey() { return localStorage.getItem(LS.APIKEY) || ''; }
-
-function saveSettings() {
-  const gas = document.getElementById('gasInput').value.trim();
-  const key = document.getElementById('apiKeyInput').value.trim();
-  let saved = false;
-  if (key.startsWith('sk-ant-')) {
-    localStorage.setItem(LS.APIKEY, key);
-    saved = true;
-  } else if (key && !key.startsWith('sk-ant-')) {
-    toast('⚠️ API Key 格式不正確（應以 sk-ant- 開頭）'); return;
-  }
-  if (gas.includes('script.google.com')) {
-    localStorage.setItem(LS.GAS, gas);
-    saved = true;
-  } else if (gas && !gas.includes('script.google.com')) {
-    toast('⚠️ Apps Script URL 格式不正確'); return;
-  }
-  if (!saved) { toast('⚠️ 請至少填入一個欄位'); return; }
-  closeModal();
-  toast('✅ 已儲存設定，重新載入…');
-  setTimeout(() => doReload(), 400);
-}
-
+/* ═══ MODAL ═══ */
 function openModal() {
-  document.getElementById('gasInput').value = getGas();
-  const k = getApiKey();
-  document.getElementById('apiKeyInput').value = k ? k.slice(0,12)+'…（已儲存）' : '';
+  document.getElementById('gasInput').value = localStorage.getItem(LS.GAS) || '';
   document.getElementById('setupModal').classList.add('open');
 }
 function closeModal() { document.getElementById('setupModal').classList.remove('open'); }
+function saveSettings() {
+  const gas = document.getElementById('gasInput').value.trim();
+  if (!gas) { toast('⚠️ 請填入 Apps Script URL'); return; }
+  if (!gas.includes('script.google.com')) { toast('⚠️ URL 格式不正確'); return; }
+  localStorage.setItem(LS.GAS, gas);
+  closeModal();
+  toast('✅ 已儲存，開始抓取新聞…');
+  setTimeout(() => doRefresh('full'), 400);
+}
 
-/* ═══ TIME UTILS ═══ */
+/* ═══ TIME ═══ */
 function nowStr() {
   const d = new Date(), p = n => String(n).padStart(2,'0');
   return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
 }
 function setUpd(t) {
-  const s = t || nowStr();
-  localStorage.setItem(LS.UPD, s);
+  const s = t || nowStr(); localStorage.setItem(LS.UPD, s);
   document.getElementById('txtUpd').textContent = s;
   document.getElementById('mpUpd').style.display = '';
 }
 function setSync(t) {
-  if (!t) return;
-  localStorage.setItem(LS.SYNC, t);
+  if (!t) return; localStorage.setItem(LS.SYNC, t);
   document.getElementById('txtSync').textContent = t;
   document.getElementById('mpSync').style.display = '';
 }
@@ -410,7 +384,6 @@ function card(n, hero=false) {
 function skCard(h=false) {
   return `<div class="sk-card${h?' card hero':''}"><div class="sk sk-h1"></div><div class="sk sk-h2"></div><div class="sk sk-l"></div><div class="sk sk-l"></div><div class="sk sk-ls"></div><div class="sk sk-b"></div></div>`;
 }
-
 function filtered() {
   let l = NEWS;
   if (ATAG) l = l.filter(n=>(n.tags||[]).includes(ATAG));
@@ -455,9 +428,9 @@ function renderTrends() {
   const D=[
     {i:'🔥',t:'中東衝突持續升溫',d:'霍爾木茲封鎖持續，談判陷僵局'},
     {i:'📉',t:'全球增長遭下修',d:'IMF警告能源衝擊拖累2026年GDP'},
-    {i:'🤖',t:'AI軍備競賽加速',d:'美中差距縮小，模型性能競爭激烈'},
+    {i:'🤖',t:'AI軍備競賽加速',d:'美中差距縮小，模型競爭激烈'},
     {i:'🚀',t:'北韓接連飛彈測試',d:'宣稱無限擴大核武庫，亞太升溫'},
-    {i:'⚖️',t:'貿易戰重塑供應鏈',d:'美中貿易跌30%，東協從中受益'},
+    {i:'⚖️',t:'貿易戰重塑供應鏈',d:'美中貿易跌30%，東協受益'},
   ];
   document.getElementById('trends-body').innerHTML=
     D.map(d=>`<div class="tri"><span class="tri-ico">${d.i}</span><div class="tri-body"><strong>${d.t}</strong>${d.d}</div></div>`).join('');
@@ -468,9 +441,9 @@ function renderAll() { renderTop3();renderGrid();renderTbar();renderTags();count
 function sw(btn,c) { document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on')); btn.classList.add('on'); CAT=c; renderGrid(); }
 function ftag(t) { ATAG=(ATAG===t)?null:t; CAT='all'; document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on')); document.querySelector('[data-c="all"]').classList.add('on'); renderGrid();renderTags();renderTbar(); }
 
-/* ═══ DISABLE/ENABLE ALL BUTTONS ═══ */
+/* ═══ LOCK BUTTONS ═══ */
 function lockBtns(v) { ['btnR','btnQ','btnF'].forEach(id=>{ document.getElementById(id).disabled=v; }); }
-function setSpinning(id, v) { document.getElementById(id).querySelector('svg').classList.toggle('spinning',v); }
+function setSpin(id,v) { document.getElementById(id).querySelector('svg').classList.toggle('spinning',v); }
 
 /* ═══ BOOT STEP ═══ */
 function bstep(n, msg, pct) {
@@ -483,81 +456,30 @@ function bstep(n, msg, pct) {
   document.getElementById('bfill').style.width=pct+'%';
 }
 
-/* ═══ GOOGLE APPS SCRIPT CALLS ═══ */
+/* ═══ GAS CALLS ═══ */
+function getGas() { return localStorage.getItem(LS.GAS)||''; }
+
 async function gasRead() {
-  const url = getGas(); if(!url) return null;
+  const url=getGas(); if(!url) return null;
   try {
     const r = await fetch(`${url}?action=read`);
     if (!r.ok) throw new Error('HTTP '+r.status);
     return await r.json();
-  } catch(e) { console.warn('gasRead error:', e); return null; }
+  } catch(e) { console.warn('gasRead:', e.message); return null; }
 }
 
-async function gasFetchNews(mode, existTitles=null) {
-  const apiKey = getApiKey();
-  const gasUrl = getGas();
-
-  // Mode A: Direct Anthropic API call using stored API key
-  if (apiKey) {
-    return await fetchDirect(mode, existTitles, apiKey);
-  }
-
-  // Mode B: Via Google Apps Script proxy
-  if (gasUrl) {
-    const r = await fetch(gasUrl, {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ action:'fetch_news', mode, existTitles })
-    });
-    if (!r.ok) throw new Error('GAS HTTP '+r.status);
-    const d = await r.json();
-    if (!d.ok) throw new Error(d.error || 'GAS returned error');
-    return d;
-  }
-
-  throw new Error('請先在 ⚙️ 設定中填入 Anthropic API Key 或 Apps Script URL');
-}
-
-async function fetchDirect(mode, existTitles, apiKey) {
-  const date = new Date().toISOString().split('T')[0];
-  const n = mode==='quick' ? 6 : 20;
-  const avoidBlock = (existTitles && mode==='quick')
-    ? `EXISTING headlines (skip these):\n${existTitles}\n\nReturn ONLY new stories not in the list above (max ${n}).`
-    : `Return exactly ${n} diverse stories.`;
-
-  const sys = `You are an elite international news curator. Today is ${date}.
-Search the latest 72 hours of international headlines from: Reuters, AP, BBC, CNN, Bloomberg, Financial Times, The Guardian, Washington Post, Deutsche Welle, The Economist, NYT, WSJ.
-${avoidBlock}
-DEDUP: On any single topic, keep only the single most representative story.
-CATEGORIES REQUIRED: at least 1 of each: geo, econ, conflict, tech, macro.
-OUTPUT: valid JSON array ONLY. No markdown, no text outside the array.
-Each item: {"id":integer,"cat":"geo"|"econ"|"conflict"|"tech"|"macro","impact":"high"|"mid"|"low","top3":boolean,"hero":boolean,"title_en":"English headline","summary_zh":"3-5 sentence Chinese summary","why_zh":"One-sentence Chinese implication/risk (15-25 chars)","source":"Source name","sourceUrl":"Direct URL","time":"YYYY-MM-DD HH:mm","tags":["中文tag1","中文tag2"]}
-Rules: top3=true for top 3 only; hero=true for #1 only.`;
-
-  const resp = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01'
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 8000,
-      tools: [{type:'web_search_20250305',name:'web_search'}],
-      system: sys,
-      messages: [{role:'user',content:`Search and return latest ${n} international headlines as JSON for ${date}.`}]
-    })
+async function gasFetch(mode) {
+  const url=getGas();
+  if (!url) throw new Error('請先在 ⚙️ 設定中填入 Apps Script URL');
+  const r = await fetch(url, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ action:'fetch', mode })
   });
-  if (!resp.ok) {
-    const err = await resp.text();
-    throw new Error(`Anthropic API ${resp.status}: ${err.slice(0,120)}`);
-  }
-  const data = await resp.json();
-  const text = (data.content||[]).map(b=>b.type==='text'?b.text:'').join('');
-  const m = text.match(/\[[\s\S]*\]/);
-  if (!m) throw new Error('No JSON array in response');
-  return { ok: true, data: JSON.parse(m[0]), syncedAt: new Date().toISOString() };
+  if (!r.ok) throw new Error('GAS HTTP '+r.status);
+  const d = await r.json();
+  if (!d.ok) throw new Error(d.error||'GAS error');
+  return d;
 }
 
 /* ═══ BOOT ═══ */
@@ -565,43 +487,36 @@ async function boot() {
   bstep(1,'檢查本地快取…', 15);
   await sleep(180);
 
-  // Restore meta display
-  const su = localStorage.getItem(LS.UPD), ss = localStorage.getItem(LS.SYNC);
-  if (su) { document.getElementById('txtUpd').textContent=su; document.getElementById('mpUpd').style.display=''; }
-  if (ss) { document.getElementById('txtSync').textContent=ss; document.getElementById('mpSync').style.display=''; }
+  // Restore header meta
+  const su=localStorage.getItem(LS.UPD), ss=localStorage.getItem(LS.SYNC);
+  if(su){document.getElementById('txtUpd').textContent=su;document.getElementById('mpUpd').style.display='';}
+  if(ss){document.getElementById('txtSync').textContent=ss;document.getElementById('mpSync').style.display='';}
 
   const gasUrl = getGas();
-  const apiKey = getApiKey();
-  const hasAny = gasUrl || apiKey;
 
-  if (!hasAny) {
-    // Nothing configured — check local cache then prompt
-    bstep(2,'尚未設定，讀本地快取…', 55);
-    await sleep(200);
+  if (!gasUrl) {
+    bstep(2,'尚未設定…', 55); await sleep(180);
     const local = localStorage.getItem(LS.NEWS);
     if (local) {
       NEWS = JSON.parse(local);
-      bstep(3,'渲染頁面…', 88);
-      await sleep(150);
+      bstep(3,'渲染頁面…', 88); await sleep(150);
       finishBoot();
-      toast('ℹ️ 請點 ⚙️ 填入 API Key 以啟用完整功能');
+      toast('ℹ️ 請點 ⚙️ 設定 Apps Script URL');
       setTimeout(openModal, 1400);
     } else {
-      bstep(3,'等待設定…', 88);
-      await sleep(150);
+      bstep(3,'等待設定…', 88); await sleep(150);
       finishBoot();
       document.getElementById('ngrid').innerHTML=`<div class="state-box">
-        <div class="ico">⚙️</div>
-        <h3>尚未設定</h3>
-        <p>請先填入 Anthropic API Key 才能載入新聞</p>
+        <div class="ico">⚙️</div><h3>尚未設定</h3>
+        <p>請設定 Google Apps Script URL 以開始載入新聞</p>
         <button class="state-btn" onclick="openModal()">立即設定 →</button>
       </div>`;
       document.getElementById('t3grid').innerHTML=[skCard(true),skCard(),skCard()].join('');
+      setTimeout(openModal, 600);
     }
     return;
   }
 
-  // Has GAS URL — try to read cache
   bstep(2,'讀取 Google Sheet 快取…', 50);
   const sheet = await gasRead();
 
@@ -609,32 +524,29 @@ async function boot() {
     NEWS = sheet.data;
     localStorage.setItem(LS.NEWS, JSON.stringify(NEWS));
     setSync(sheet.syncedAt);
-    bstep(3,'渲染頁面…', 88);
-    await sleep(150);
+    bstep(3,'渲染頁面…', 88); await sleep(150);
     finishBoot();
     banner(`✅ 已從 Google Sheet 載入 ${NEWS.length} 則新聞`);
   } else {
-    // Cache empty — auto full refresh
-    bstep(3,'快取為空，抓取新聞…', 88);
-    await sleep(150);
+    // Cache empty — auto full fetch
+    bstep(3,'快取為空，抓取 RSS…', 88); await sleep(150);
     finishBoot(true);
   }
 }
 
 function finishBoot(autoFetch=false) {
   document.getElementById('bfill').style.width='100%';
-  const b = document.getElementById('boot'); b.classList.add('out');
+  const b=document.getElementById('boot'); b.classList.add('out');
   document.getElementById('main').style.display='';
   setTimeout(()=>b.remove(), 560);
   renderAll(); renderTrends();
   if (autoFetch) setTimeout(()=>doRefresh('full'), 500);
 }
 
-/* ═══ RELOAD — only reads Google Sheet ═══ */
+/* ═══ RELOAD ═══ */
 async function doReload() {
-  const gasUrl = getGas();
-  if (!gasUrl) { openModal(); return; }
-  lockBtns(true); setSpinning('btnR', true);
+  if (!getGas()) { openModal(); return; }
+  lockBtns(true); setSpin('btnR',true);
   toast('🔄 從 Google Sheet 讀取快取…', 99999);
   const sheet = await gasRead();
   if (sheet && sheet.ok && sheet.data && sheet.data.length > 0) {
@@ -642,64 +554,43 @@ async function doReload() {
     localStorage.setItem(LS.NEWS, JSON.stringify(NEWS));
     setSync(sheet.syncedAt);
     renderAll();
-    toast(`✅ 已載入 ${NEWS.length} 則新聞（快取）`);
+    toast(`✅ 已載入 ${NEWS.length} 則新聞`);
     banner(`Reload 完成，共 ${NEWS.length} 則`);
   } else {
     toast('⚠️ Sheet 無資料，請先執行 Full refresh');
   }
-  lockBtns(false); setSpinning('btnR', false);
+  lockBtns(false); setSpin('btnR',false);
 }
 
-/* ═══ REFRESH — calls AI via GAS ═══ */
+/* ═══ REFRESH ═══ */
 async function doRefresh(mode) {
-  const gasUrl = getGas();
-  if (!gasUrl) { openModal(); return; }
-
+  if (!getGas()) { openModal(); return; }
   lockBtns(true);
-  const activeBtn = mode==='quick' ? 'btnQ' : 'btnF';
-  setSpinning(activeBtn, true);
-
+  const bid = mode==='quick'?'btnQ':'btnF';
+  setSpin(bid,true);
   if (mode==='full') {
     document.getElementById('t3grid').innerHTML=[skCard(true),skCard(),skCard()].join('');
     document.getElementById('ngrid').innerHTML=Array(6).fill(skCard()).join('');
-    toast('🔁 Full Refresh：AI 重抓全部新聞中…', 99999);
+    toast('🔁 Full Refresh：抓取 RSS 新聞中…', 99999);
   } else {
-    toast('⚡ Quick Refresh：AI 搜尋最新頭條…', 99999);
+    toast('⚡ Quick Refresh：補入最新頭條…', 99999);
   }
-
   try {
-    const existTitles = mode==='quick' ? NEWS.map(n=>n.title_en||n.title||'').join('\n') : null;
-    const res = await gasFetchNews(mode, existTitles);
-    const fresh = res.data;
-
-    if (mode==='full') {
-      NEWS = fresh.map((n,i)=>({...n,id:i+1}));
-      toast(`✅ 已更新 ${NEWS.length} 則頭條`);
-    } else {
-      const exist = new Set(NEWS.map(n=>(n.title_en||n.title||'').toLowerCase()));
-      const nw = fresh.filter(n=>!exist.has((n.title_en||n.title||'').toLowerCase()));
-      if (nw.length) {
-        const mx = Math.max(...NEWS.map(n=>n.id||0), 0);
-        NEWS = [...nw.map((n,i)=>({...n,id:mx+i+1,top3:false,hero:false})), ...NEWS].slice(0,25);
-        toast(`✅ 新增 ${nw.length} 則新聞`);
-      } else {
-        toast('✅ 已是最新，無新頭條');
-      }
-    }
-
+    const res = await gasFetch(mode);
+    NEWS = res.data;
     const now = nowStr();
-    setUpd(now); setSync(res.syncedAt || now);
+    setUpd(now); setSync(res.syncedAt||now);
     localStorage.setItem(LS.NEWS, JSON.stringify(NEWS));
     renderAll();
-    banner(`同步完成，共 ${NEWS.length} 則新聞已寫入 Google Sheet`);
-
+    const label = mode==='full'?`已更新 ${NEWS.length} 則頭條`:`新增完成，共 ${NEWS.length} 則`;
+    toast(`✅ ${label}`);
+    banner(`同步完成，共 ${NEWS.length} 則新聞`);
   } catch(e) {
     console.error(e);
-    toast('⚠️ ' + (e.message||'更新失敗'));
+    toast('⚠️ '+( e.message||'更新失敗'));
     renderAll();
   }
-
-  lockBtns(false); setSpinning(activeBtn, false);
+  lockBtns(false); setSpin(bid,false);
 }
 
 /* ═══ INIT ═══ */
