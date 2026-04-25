@@ -314,7 +314,17 @@ function saveM(){
 /* time */
 function now(){const d=new Date(),p=n=>String(n).padStart(2,'0');return`${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;}
 function setUpd(t){const s=t||now();localStorage.setItem(K.UPD,s);document.getElementById('tUpd').textContent=s;document.getElementById('pUpd').style.display='';}
-function setSync(t){if(!t)return;localStorage.setItem(K.SYNC,t);document.getElementById('tSync').textContent=t;document.getElementById('pSync').style.display='';}
+function fmtSync(t){
+  if(!t)return t;
+  // Handle "Sat Apr 25 2026 15:06:00 GMT+0800 (台北標準時間)" or ISO or "2026-04-25 15:06"
+  try{
+    const d=new Date(t);
+    if(isNaN(d))return t;
+    const p=n=>String(n).padStart(2,'0');
+    return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes());
+  }catch(e){return t;}
+}
+function setSync(t){if(!t)return;const s=fmtSync(t);localStorage.setItem(K.SYNC,s);document.getElementById('tSync').textContent=s;document.getElementById('pSync').style.display='';}
 
 /* toast / banner */
 function toast(msg,ms=3000){const e=document.getElementById('toast');e.textContent=msg;e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),ms);}
